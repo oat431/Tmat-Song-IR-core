@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from service.check_prime import check_prime
-from service.artist_service import get_all_artists
+from service.artist_service import *
 from service.song_service import get_all_song
 
 app = Flask(__name__)
@@ -24,7 +24,10 @@ def check_prime_api(num):
 
 @app.route('/artists', methods=['GET'])
 def get_artists():
-    return get_all_artists()
+    name = request.args.get("name")
+    if name is None:
+        return jsonify(get_all_artists())
+    return jsonify(get_artists_by_name(name))
 
 
 @app.route('/songs', methods=['GET'])

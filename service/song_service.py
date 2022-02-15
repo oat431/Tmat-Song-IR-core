@@ -14,4 +14,4 @@ from nltk.stem import PorterStemmer
 
 def get_all_song():
     data = pd.read_csv('./data/lyrics-data.csv')
-    return data.to_dict()
+    return data.head().to_dict()
