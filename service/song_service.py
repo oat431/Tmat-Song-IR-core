@@ -12,6 +12,6 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 
-def get_all_artists():
-    data = pd.read_csv('./data/artists-data.csv')
+def get_all_song():
+    data = pd.read_csv('./data/lyrics-data.csv')
     return data.to_dict()
