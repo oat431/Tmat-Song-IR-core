@@ -127,9 +127,9 @@ def search_song_by_lyric(query, score):
         for word in misspelled:
             recommend = RecommendWord(
                 spell.correction(word),
-                spell.candidates(word)
+                [i for i in spell.candidates(word)]
             )
-            recommend_word.append(recommend.get_word())
+            recommend_word.append(json.dumps(recommend.get_word()))
         return recommend_word
 
     if lyric in artist_list:
