@@ -32,7 +32,10 @@ def get_artists():
 
 @app.route('/songs', methods=['GET'])
 def get_songs():
-    return get_all_song()
+    name = request.args.get("name")
+    if name is None:
+        return get_all_song()
+    return jsonify(get_song_by_name(name))
 
 
 # search song

@@ -8,35 +8,42 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy import sparse
 
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from model import bm25
+from model.Song import Songs
 from model.bm25 import BM25
 from model.querySong import QuerySongs
 
 data = pd.read_csv('./data/lyrics-data.csv')
+artist = pd.read_csv('./data/artists-data.csv')
+artist_list = sorted([i.lower() for i in artist["Artist"]])
+songs_list = sorted([i.lower() for i in data["SName"]])
 data = data.drop_duplicates()
 data = data[data.Idiom == "ENGLISH"]
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(data["Lyric"].astype('U'))
-bm24 = BM25()
-bm24.fit(data["Lyric"].astype('U'))
+bm25 = BM25()
+bm25.fit(data["Lyric"].astype('U'))
 
 def get_all_song():
-
     return data.head().to_dict()
+
 
 def get_song_by_name(name):
     songs = data[data.SName == name]
-    for i in range(len(songs)) :
-        print("Song name:",songs.iloc[i]["SName"])
-        print("By:",songs.iloc[i]["ALink"])
-        print("Lyric:",songs.iloc[i]["Lyric"])
-        print()
+    found = []
+    for i in range(len(songs)):
+        song = Songs(
+            songs.iloc[i].to_dict()["ALink"],
+            songs.iloc[i].to_dict()["SName"],
+            songs.iloc[i].to_dict()["Lyric"]
+        )
+        found.append(json.dumps(song.get_song()))
+    return found
+
 
 def clean_lyric(lyric):
     ps = PorterStemmer()
@@ -55,7 +62,7 @@ def search_by_tf(query):
     # vectorizer = CountVectorizer(preprocessor=clean_lyric)
     # vectorizer.fit_transform(lyric)
     # result = vectorizer.transform([query])
-    # print(result)
+    # return result
 
 
 def serach_by_tf_idf(query):
@@ -73,6 +80,16 @@ def search_song_by_lyric(query, score):
     lyric = query.lower()
     result = []
     rank = 1
+
+    if lyric in artist_list:
+        song = lyric.replace(" ", "-")
+        song = "/" + song + "/"
+        song_list = sorted([i for i in data[data.ALink == song]["SName"]])
+        return song_list
+
+    if lyric.lower() in songs_list:
+        return get_song_by_name(query)
+
     if score == 'tf':
         return search_by_tf(query)
 
@@ -90,7 +107,7 @@ def search_song_by_lyric(query, score):
             result.append(json.dumps(song.get_song()))
         return result
     if score == 'bm25':
-        songs = search_by_bm25(query)
+        songs = search_by_bm25(lyric)
         for i in songs:
             song = QuerySongs(
                 rank,

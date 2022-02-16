@@ -14,9 +14,10 @@ from nltk.stem import PorterStemmer
 
 from model.artists import Artists
 
+data = pd.read_csv('./data/artists-data.csv')
+
 
 def get_all_artists():
-    data = pd.read_csv('./data/artists-data.csv')
     artists = []
     for i in range(len(data)):
         artist = Artists(
@@ -32,7 +33,6 @@ def get_all_artists():
 
 
 def get_artists_by_name(name):
-    data = pd.read_csv('./data/artists-data.csv')
     query = name.lower()
     artists = []
     for i in range(len(data)):
