@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 
 from service.check_prime import check_prime
 from service.artist_service import *
-from service.song_service import get_all_song
+from service.song_service import *
 
 app = Flask(__name__)
 
@@ -35,11 +35,10 @@ def get_songs():
     return get_all_song()
 
 
-@app.route('/search', methods=['GET'])
+# search song
+@app.route('/search-song', methods=['POST'])
 def search_artist():
-    args = request.args
-    artist = args.get("name")
-    return "you search for " + artist
+    return jsonify(search_song_by_lyric(request.json['query'], request.json['score']))
 
 
 if __name__ == '__main__':
