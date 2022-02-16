@@ -14,7 +14,7 @@ from nltk.stem import PorterStemmer
 
 class BM25(object):
     def __init__(self, b=0.75, k1=1.6):
-        self.vectorizer = TfidfVectorizer(norm=None, smooth_idf=False)
+        self.vectorizer = TfidfVectorizer(norm=None, smooth_idf=False,ngram_range=(1,2))
         self.b = b
         self.k1 = k1
 
