@@ -30,26 +30,14 @@ artist_list = sorted([i.lower() for i in artist["Artist"]])
 songs_list = sorted([i.lower() for i in data["SName"]])
 data = data.drop_duplicates()
 data = data[data.Idiom == "ENGLISH"]
-vectorizer = TfidfVectorizer()
+vectorizer = TfidfVectorizer(ngram_range=(1,3))
 X = vectorizer.fit_transform(data["Lyric"].astype('U'))
 bm25 = BM25()
 bm25.fit(data["Lyric"].astype('U'))
 
-path = "E:\CMU\953\IR481\Module4\IULA\EN"
-os.chdir(path)
-root_folder = os.listdir()
 
-context = ''
-for file in root_folder:
-    folder = f"E:\CMU\953\IR481\Module4\IULA\EN\{file}"
-    os.chdir(folder)
-    plan_text = os.listdir()[1]
-    file_path = f"{folder}\{plan_text}"
-    temp = Path(file_path).read_text('utf-8')
-    temp = temp.replace('\n', '')
-    context += temp
-
-context = re.sub('[^A-Za-z]', " ", context)
+context = Path("./data/eng-simple_wikipedia_2021_300K-sentences.txt").read_text("utf-8")
+context = re.sub('[^A-Za-z]'," ",context)
 context = " ".join(context.split())
 context = context.lower()
 
@@ -170,4 +158,4 @@ def search_song_by_lyric(query, score):
             rank += 1
             result.append(json.dumps(song.get_song()))
         return result
-    print('in correct method for seaching')
+    print('incorrect method for searching')

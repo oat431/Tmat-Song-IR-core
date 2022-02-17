@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import cross_origin
 
 from service.check_prime import check_prime
 from service.artist_service import *
@@ -40,6 +41,7 @@ def get_songs():
 
 # search song
 @app.route('/search-song', methods=['POST'])
+@cross_origin()
 def search_artist():
     return jsonify(search_song_by_lyric(request.json['query'], request.json['score']))
 
